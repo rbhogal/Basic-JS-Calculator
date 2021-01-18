@@ -21,8 +21,8 @@ body {
   justify-content: center;
   align-content: center;
   min-height: 100vh;
-  grid-template-columns: auto auto;
-  grid-template-rows: minmax(150px, auto) auto;
+  grid-template-columns: 210px 70px;
+  grid-template-rows: minmax(150px, auto) 360px;
   background-color: #1a73e9;
   border: 1px solid white;
 }
@@ -34,9 +34,9 @@ body {
   flex-direction: column;
   align-items: flex-end;
   justify-content: space-around;
+  padding: 15px;
   word-wrap: break-word;
   word-break: break-all;
-  padding: 15px;
 }
 
 .number__keys {
