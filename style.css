@@ -54,6 +54,10 @@ body {
   grid-template-columns: 70px;
 }
 
+.operator__keys > button {
+  color: #1a73e9;
+}
+
 .current__operand {
   font-size: 2.5rem;
 }
