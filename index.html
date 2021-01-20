@@ -4,14 +4,14 @@
     <!-- title, script, style sheets -->
     <title>Calculator</title>
     <link rel="stylesheet" href="style.css" />
+    <script defer src="script.js"></script>
   </head>
 
   <body>
     <div class="calculator">
-      <!-- everything else goes here -->
       <div class="calc__display">
-        <div class="current__operand">123+456</div>
-        <div class="result">579</div>
+        <div class="current__operand"></div>
+        <div class="previous__operand"></div>
       </div>
       <div class="number__keys">
         <button>7</button>
@@ -25,10 +25,10 @@
         <button>3</button>
         <button>0</button>
         <button>.</button>
-        <button>=</button>
+        <button id="equal">=</button>
       </div>
       <div class="operator__keys">
-        <button>DEL</button>
+        <button id="backspace">DEL</button>
         <button>%</button>
         <button>*</button>
         <button>-</button>
