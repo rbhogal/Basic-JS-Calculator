@@ -11,8 +11,6 @@ const data = {
   prevOperand: [],
 };
 
-
-
 // Event listeners
 // User inputs numbers
 btnNumber.addEventListener("click", function (e) {
@@ -21,9 +19,7 @@ btnNumber.addEventListener("click", function (e) {
   const number = e.target.textContent;
 
   // 1) Render input to current operand and store it into data
-  
 
-  curOperand += Number(number);
   console.log(curOperand);
   render(number);
 });
