@@ -1,0 +1,67 @@
+
+
+1) Key press
+If I press key then numKey = a number value = truthy
+
+so !numKey = !(true) = false
+
+if I press key then I want input = numKey
+
+
+
+
+2) Click > button (GUARD)
+if I click a button numKey = undefined = falsy
+
+so !numKey = !(false) = true
+
+if I click I want input = e.target.textContent
+
+
+//////////////////////
+
+!expr 
+
+returns false if expr = true, overwise returns true
+
+
+///////////////////////
+
+
++numKey
+
+so if you press any number or space key u will get a number otherwise NaN 
+and you can use that for guard clause
+
+
+key presses allowed: 0-9, - , . 
+key presses NOT allowed: all the rest
+
+!+numKey (this works but doesn't allow zero or -)
+
+
+if (+numKey === !NaN && numKey === && numKey === '0' && '.') return 
+
+if (numKey !== '0' || numKey !== '.' && (!+numKey)) return 
+
+
+// Scenario 1
+
+I press 0
+numKey = '0'
+
+numKey !== '0' (not true)
+
+
+// Scenario 2
+
+I press . 
+numKey = '.'
+
+numKey !== '.' (not true)
+
+// Scenario 3
+
+I press 0-9
+
+(!+numKey)

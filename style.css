@@ -57,11 +57,11 @@ body {
   color: #1a73e9;
 }
 
-.current__operand {
+.main__display {
   font-size: 2.5rem;
 }
 
-.previous__operand {
+.secondary__display {
   font-size: 2rem;
   color: rgb(0, 0, 0, 0.6);
 }

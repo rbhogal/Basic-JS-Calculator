@@ -6,19 +6,29 @@ const btnOperator = document.querySelector('.operator__keys');
 const btnEqual = document.querySelector('#equal');
 const btnDecimal = document.getElementById('decimal');
 
-const containerCurOperand = document.querySelector('.current__operand');
-const containerPrevOperand = document.querySelector('.previous__operand');
+const containerMainDisplay = document.querySelector('.main__display');
+const containerSecDisplay = document.querySelector('.secondary__display');
 
-let newEquation;
+let newExpression;
 
-const data = ['', '', '', ''];
-[curOperand, prevOperand, operator, answer] = data;
+const data = {
+  curOperand: '',
+  prevOperand: '',
+  operator: '',
+  answer: '',
+  keysAllowed: ['.', '0', '-', '+', '%'],
+};
+
+const { curOperand, prevOperand, operator, answer, keysAllowed } = data;
+console.log(keysAllowed);
 
 // User inputs numbers
-btnNumber.addEventListener('click', renderCurOperand.bind(this));
+btnNumber.addEventListener('click', renderMainDisplay);
+document.addEventListener('keydown', renderMainDisplay);
 
 // User hits an operator key
-btnOperator.addEventListener('click', renderOperator.bind(this));
+btnOperator.addEventListener('click', renderSecDisplay);
+// document.addEventListener('keydown', renderSecDisplay);55
 
 // btnOperator.addEventListener('click', renderPrevOperand.bind(this));
 
@@ -32,30 +42,52 @@ btnOperator.addEventListener('click', renderOperator.bind(this));
 ///////////////////////////////////////////////////////////////////////////////
 
 // Render input to calculator display as current operand
-function renderCurOperand(e) {
-  // Add guard clause for ENTER (equal) button and div element
-  const click = e.target;
-  const input = e.target.textContent;
+function renderMainDisplay(e) {
+  const button = e.target;
+  const numKey = e.key;
+  const click = !numKey ? true : false;
 
-  // Guard clauses for equal button and number__keys div
-  if (click.textContent === '=' || click.tagName === 'DIV') return;
+  // 1) Input depending on click or keypress event (Scenario is for click, numKey = undefined)
+  const input = numKey ? numKey : e.target.textContent;
 
-  // 1) Render input to current operand and store it into data
-  containerCurOperand.textContent += input;
+  // Guard clauses for either click or keypress
+  if (click) {
+    if (input === '=' || button.tagName === 'DIV') return;
+  } else {
+    const newValue = false;
+    const keysAllowed =
+      +numKey ||
+      numKey === '.' ||
+      numKey === '0' ||
+      numKey === '-' ||
+      numKey === '+' ||
+      numKey === '*' ||
+      numKey === '%'
+        ? true
+        : false;
 
-  // 2) Store current operand input data into array
+    // Guard clause for (KEYPRESS)
+    if (!keysAllowed) return;
+
+    // Allow operator again only once you enter new value
+  }
+
+  // 2) Render input to current operand and store it into data
+  containerMainDisplay.textContent += input;
+
+  // 3) Store current operand input data into array
   curOperand += input;
-  console.log(curOperand);
 
-  // Decimal press only allowed once
-  if (click.textContent === '.') click.disabled = true;
-
-  newEquation = false;
+  // 4) Decimal press only allowed once
+  if (input === '.') button.disabled = true;
 }
 
-function renderOperator() {
+function renderSecDisplay() {
   const click = e.target;
   const operator = e.target.textContent;
+
+  // Check if this is the first operand input or second
+  newExpression = newExpression ? false : true;
 
   // Guard clauses for equal button and number__keys div
   if (click.textContent === 'DEL' || click.tagName === 'DIV') return;
@@ -73,7 +105,7 @@ function renderPrevOperand(e) {
 
   //Display current operand into previous operand
   prevOperand = curOperand;
-  containerPrevOperand.textContent = prevOperand;
+  containerSecDisplay.textContent = prevOperand;
 
   // Operator key allowed only once
   if (click.textContent === operator) click.disabled = true;
@@ -96,7 +128,7 @@ function calculate() {
 
 //   // Display current operand into previous operand
 
-//   containerPrevOperand.textContent = curOperand;
+//   containerSecDisplay.textContent = curOperand;
 //   // Convert curOperand to a number
 //   // +curOperand
 
@@ -105,11 +137,29 @@ function calculate() {
 
 // Clear current input display
 function clear() {
-  containerCurOperand.textContent = '';
+  containerMainDisplay.textContent = '';
 }
 
 // clear();
 
+/*
+// Calculate
+function calc(a, b, operator) {
+  if (operator === '+') add(a, b);
+  if (operator === '-') return;
+  if (operator === '%') return;
+  if (operator === '*') return;
+}
+
+calc(5, 2, '+');
+
+// Math functions
+
+function add(a, b) {
+  return (answer = a + b);
+}
+
+*/
 // Helper functions
 
 /**
@@ -117,12 +167,8 @@ function clear() {
  * @param {*} button - button string (textContent)
  */
 
-function guardClause(button) {
-  if (this.click.textContent === button || this.click.tagName === 'DIV') return;
-}
-
 function init() {
-  newEquation = true;
+  newExpression = false;
 }
 
 init();
