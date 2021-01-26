@@ -15,11 +15,12 @@ const data = {
   prevOperand: '',
   operator: '',
   answer: '',
-  isOperator: false,
+  inputA: '',
+  inputB: '',
 };
-let { curOperand, prevOperand, operator, answer, isOperator } = data;
+let { curOperand, prevOperand, operator, answer, inputA, inputB } = data;
 
-// Event listeners for first operand
+// Event listeners
 btnNumber.addEventListener('click', controller);
 btnBackspace.addEventListener('click', backspace);
 document.addEventListener('keydown', controller);
@@ -41,7 +42,6 @@ function controller(e) {
   if (click)
     if (input === '=' || input === 'DEL' || button.tagName === 'DIV') return;
   if (keyPress) {
-    // const newValue = false;
     const keysAllowed =
       +numKey ||
       numKey === '.' ||
@@ -55,27 +55,17 @@ function controller(e) {
     if (!keysAllowed) return;
   }
 
-  // 3) a. Render First Operand: Render numbers
-  if (+input >= 0 || +input <= 9) renderNumbers(input);
+  // 3) Render main display
+  renderMainDisplay(input);
 
-  // 3) b. Render First Operand: Render decimal
-  if (input === '.') renderDecimal(input);
+  // 4) Separate and store string into inputs A and B
+  storeOperands(input);
 
-  // 3) c. Render First Operand: Render operator
-  if (input === '%' || input === '*' || input === '-' || input === '+')
-    renderOperator(input);
+  // 5) Calculate expression
+  calc(inputA, inputB);
 
-  // 4) Store current operand and second input data into array
-  curOperand += input;
-
-  // 5) Separate string into first and second operand
-  const oprExists = curOperand.indexOf(operator); 
-  const oprIndex = oprExists; 
-  if (oprExists) {
-    console.log(curOperand.slice(oprIndex + 1));
-    prevOperand = curOperand;
-  }
-
+  // 7) Render result to secDisplay
+  renderSecDisplay();
 }
 
 function renderNumbers(input) {
@@ -90,6 +80,7 @@ function renderDecimal(input) {
 function renderOperator(input) {
   containerMainDisplay.textContent += input;
   btnOperator.removeEventListener('click', controller);
+  btnDecimal.disabled = false;
   operator = input;
 }
 
@@ -113,102 +104,62 @@ function backspace() {
   containerMainDisplay.textContent = curOperand;
 }
 
-function checkLastInput(lastInput) {
-  if (
-    lastInput === '%' ||
-    lastInput === '*' ||
-    lastInput === '-' ||
-    lastInput === '+'
-  )
-    isOperator = true;
-
-  console.log(isOperator);
+function storeOperands(input) {
+  curOperand += input;
+  const oprExists = curOperand.indexOf(operator);
+  const oprIndex = oprExists;
+  if (oprExists) {
+    inputA = curOperand.slice(0, oprIndex);
+    inputB = curOperand.slice(oprIndex + 1);
+    // console.log(inputA);
+    // console.log(inputB);
+  }
 }
 
-function renderOperand2(e) {
-  const click = e.target;
-  const operator = e.target.textContent;
-
-  // Guard clauses for equal button and number__keys div
-  if (click.textContent === 'DEL' || click.tagName === 'DIV') return;
-
-  // Add operator key text to previous operand display
-  curOperand += operator;
-
-  //Display current operand into previous operand
-  prevOperand = curOperand;
-  containerSecDisplay.textContent = prevOperand;
-
-  // Operator key allowed only once
-  if (click.textContent === operator) click.disabled = true;
-
-  // Clear the current operand
-  clear();
-  console.log(prevOperand);
-
-  // Return previous operand as number
-  calculate();
+function calc(a, b) {
+  if (!inputB) return;
+  if (operator === '%') divide(+a, +b);
+  if (operator === '*') multiply(+a, +b);
+  if (operator === '+') add(+a, +b);
+  if (operator === '-') subtract(+a, +b);
 }
-
-function renderSecDisplay() {
-  const click = e.target;
-  const operator = e.target.textContent;
-
-  // Check if this is the first operand input or second
-  newExpression = newExpression ? false : true;
-
-  // Guard clauses for equal button and number__keys div
-  if (click.textContent === 'DEL' || click.tagName === 'DIV') return;
-}
-
-function calculate() {
-  // stuff here;
-}
-
-// function storeInput(e) {
-//   if (e.target.tagName === "DIV") return;
-//   console.log(e.target.textContent);
-
-//   // Display current operand into previous operand
-
-//   containerSecDisplay.textContent = curOperand;
-//   // Convert curOperand to a number
-//   // +curOperand
-
-//   // Clear the current operand
-// }
-
-// Clear current input display
-// function clear() {
-//   containerMainDisplay.textContent = '';
-// }
-
-// clear();
-
-/*
-// Calculate
-function calc(a, b, operator) {
-  if (operator === '+') add(a, b);
-  if (operator === '-') return;
-  if (operator === '%') return;
-  if (operator === '*') return;
-}
-
-calc(5, 2, '+');
 
 // Math functions
-
+function divide(a, b) {
+  if (+inputB === 0) return (answer = 'undefined');
+  return (answer = a / b);
+}
+function multiply(a, b) {
+  return (answer = a * b);
+}
+function subtract(a, b) {
+  return (answer = a - b);
+}
 function add(a, b) {
   return (answer = a + b);
 }
 
-*/
-// Helper functions
+function renderMainDisplay(input) {
+  // 1) Render numbers
+  if (+input >= 0 || +input <= 9) renderNumbers(input);
 
-/**
- * Creates a guard clause to ignore button click
- * @param {*} button - button string (textContent)
- */
+  // 2) Render decimal
+  if (input === '.') renderDecimal(input);
+
+  // 3) Render operator
+  if (input === '%' || input === '*' || input === '-' || input === '+')
+    renderOperator(input);
+}
+
+function renderSecDisplay() {
+  containerSecDisplay.textContent = answer;
+}
+
+function equals() {
+  containerMainDisplay.textContent = containerSecDisplay.textContent;
+  containerSecDisplay.textContent = '';
+  btnEqual.removeEventListener('click', equals);
+}
 
 function init() {
   containerMainDisplay.textContent = '';
@@ -217,8 +168,11 @@ function init() {
   prevOperand = '';
   operator = '';
   answer = '';
+  inputA = '';
+  inputB = '';
   btnDecimal.disabled = false;
   btnOperator.addEventListener('click', controller);
+  btnEqual.addEventListener('click', equals);
 }
 
 init();
