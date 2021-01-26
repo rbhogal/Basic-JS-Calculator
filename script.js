@@ -6,6 +6,7 @@ const btnOperator = document.querySelector('.operator__keys');
 const btnEqual = document.querySelector('#equal');
 const btnBackspace = document.getElementById('backspace');
 const btnDecimal = document.getElementById('decimal');
+const btnAllClear = document.getElementById('all-clear');
 
 const containerMainDisplay = document.querySelector('.main__display');
 const containerSecDisplay = document.querySelector('.secondary__display');
@@ -21,10 +22,10 @@ const data = {
 let { curOperand, prevOperand, operator, answer, inputA, inputB } = data;
 
 // Event listeners
-btnNumber.addEventListener('click', controller);
 btnBackspace.addEventListener('click', backspace);
 document.addEventListener('keydown', controller);
 btnBackspace.addEventListener('dblclick', init);
+btnAllClear.addEventListener('click', init);
 
 // Event listeners for second operand
 
@@ -40,7 +41,13 @@ function controller(e) {
 
   // 2) Guard clauses for clicks/key presses not allowed
   if (click)
-    if (input === '=' || input === 'DEL' || button.tagName === 'DIV') return;
+    if (
+      input === '=' ||
+      input === 'DEL' ||
+      input === 'AC' ||
+      button.tagName === 'DIV'
+    )
+      return;
   if (keyPress) {
     const keysAllowed =
       +numKey ||
@@ -68,6 +75,18 @@ function controller(e) {
   renderSecDisplay();
 }
 
+function renderMainDisplay(input) {
+  // 1) Render numbers
+  if (+input >= 0 || +input <= 9) renderNumbers(input);
+
+  // 2) Render decimal
+  if (input === '.') renderDecimal(input);
+
+  // 3) Render operator
+  if (input === '%' || input === '*' || input === '-' || input === '+')
+    renderOperator(input);
+}
+
 function renderNumbers(input) {
   containerMainDisplay.textContent += input;
 }
@@ -87,9 +106,8 @@ function renderOperator(input) {
 function backspace() {
   const lastInput = curOperand[curOperand.length - 1];
 
-  // Re-enable decimal or operator buttons if deleted
+  // Re-enable decimal or operator if deleted in display
   if (lastInput === '.') btnDecimal.disabled = false;
-
   if (
     lastInput === '%' ||
     lastInput === '*' ||
@@ -98,21 +116,21 @@ function backspace() {
   )
     btnOperator.addEventListener('click', controller);
 
-  // Delete last character in string
+  // Delete the last character in the string
   containerMainDisplay.textContent = '';
   curOperand = curOperand.slice(0, -1);
   containerMainDisplay.textContent = curOperand;
+
+  // Update second display
 }
 
 function storeOperands(input) {
   curOperand += input;
-  const oprExists = curOperand.indexOf(operator);
-  const oprIndex = oprExists;
-  if (oprExists) {
+  const operatorExists = curOperand.indexOf(operator);
+  const oprIndex = operatorExists;
+  if (operatorExists) {
     inputA = curOperand.slice(0, oprIndex);
     inputB = curOperand.slice(oprIndex + 1);
-    // console.log(inputA);
-    // console.log(inputB);
   }
 }
 
@@ -139,27 +157,32 @@ function add(a, b) {
   return (answer = a + b);
 }
 
-function renderMainDisplay(input) {
-  // 1) Render numbers
-  if (+input >= 0 || +input <= 9) renderNumbers(input);
-
-  // 2) Render decimal
-  if (input === '.') renderDecimal(input);
-
-  // 3) Render operator
-  if (input === '%' || input === '*' || input === '-' || input === '+')
-    renderOperator(input);
-}
-
 function renderSecDisplay() {
   containerSecDisplay.textContent = answer;
 }
 
 function equals() {
+  // Show answer in main display
   containerMainDisplay.textContent = containerSecDisplay.textContent;
   containerSecDisplay.textContent = '';
+
+  // remove equals event listeners
   btnEqual.removeEventListener('click', equals);
+  btnNumber.removeEventListener('click', controller);
+
+  // Hide DEL button (add hidden class)
+  btnBackspace.classList.add('hidden');
+
+  // Add AC button (remove hidden class)
+  btnAllClear.classList.remove('hidden');
+  //
 }
+
+// removeAllEventListeners('click', );
+
+// function removeAllEventListeners(type, selector, callback) {
+//   selector.removeEventListener(type, callback);
+// }
 
 function init() {
   containerMainDisplay.textContent = '';
@@ -171,8 +194,13 @@ function init() {
   inputA = '';
   inputB = '';
   btnDecimal.disabled = false;
+
   btnOperator.addEventListener('click', controller);
   btnEqual.addEventListener('click', equals);
+
+  btnAllClear.classList.add('hidden');
+  btnBackspace.classList.remove('hidden');
+  btnNumber.addEventListener('click', controller);
 }
 
 init();
