@@ -33,7 +33,8 @@ function controller(e) {
   const click = !numKey ? true : false;
   const keyPress = numKey ? true : false;
 
-  // 1) Input depending on if a click or keypress event (Scenario is for click, numKey = undefined)
+  // 1) Input a number keypress ? Then input = to the text of the keypress, otherwise = to the button text
+  // Scenario is for click, numKey = undefined
   const input = numKey ? numKey : e.target.textContent;
 
   // 2) Guard clauses for clicks/key presses not allowed
@@ -59,18 +60,28 @@ function controller(e) {
     if (!keysAllowed) return;
   }
 
-  // 3) Render main display
-  renderMainDisplay(input);
-
-  // 4) Separate and store string (operand) into inputs aka operands A and B
+  // 3) Separate and store string (operand) into inputs aka operands A and B
   curOperand += input;
   storeOperands();
+
+  // 4) Render main display
+  renderMainDisplay(input);
 
   // 5) Calculate expression
   calc(operandA, operandB);
 
-  // 7) Render result to secDisplay
+  // 6) Render result to secDisplay
   renderSecDisplay();
+}
+
+function storeOperands() {
+  // console.log(operator);
+  const operatorExists = !operator ? false : true;
+  if (operatorExists) {
+    const oprIndex = curOperand.lastIndexOf(operator);
+    operandA = curOperand.slice(0, oprIndex);
+    operandB = curOperand.slice(oprIndex + 1);
+  }
 }
 
 function renderMainDisplay(input) {
@@ -95,9 +106,14 @@ function renderDecimal(input) {
 }
 
 function renderOperator(input) {
+  // if operator is empty then render it, but don't store it as an operator, and don't remove the event listener. otherwise do it
+  if (curOperand === '-') {
+    containerMainDisplay.textContent += input;
+    return;
+  }
+
   // Store operator
   operator = input;
-
   // Exception for negative numbers
   containerMainDisplay.textContent += input;
   btnOperator.removeEventListener('click', controller);
@@ -130,15 +146,6 @@ function backspace() {
   storeOperands(curOperand);
   calc(operandA, operandB);
   renderSecDisplay();
-}
-
-function storeOperands() {
-  const operatorExists = curOperand.indexOf(operator);
-  const oprIndex = operatorExists;
-  if (operatorExists) {
-    operandA = curOperand.slice(0, oprIndex);
-    operandB = curOperand.slice(oprIndex + 1);
-  }
 }
 
 function calc(a, b) {
@@ -206,10 +213,11 @@ function init() {
 
   btnOperator.addEventListener('click', controller);
   btnEqual.addEventListener('click', equals);
+  btnNumber.addEventListener('click', controller);
 
   btnAllClear.classList.add('hidden');
   btnBackspace.classList.remove('hidden');
-  btnNumber.addEventListener('click', controller);
 }
 
 init();
+// console.log(operator);

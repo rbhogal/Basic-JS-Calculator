@@ -69,3 +69,21 @@ I press 0-9
 
 -----------
 the problem is that it doesn't stop loopin it loops throught everything
+
+
+
+-------
+negative problem
+---
+
+1. input = -3 // curOperand before and after is '-'
+    a) if curOperand = '-' render, don't store operator, don't remove e.listener
+
+2. input = 3- // curOperand before and after is -3 (which is a number)
+
+3. 
+    3-3
+    operands = 3 and 3
+
+    -3-3
+    operands are empty
