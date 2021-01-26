@@ -15,18 +15,16 @@ const data = {
   curOperand: '',
   operator: '',
   answer: '',
-  inputA: '',
-  inputB: '',
+  operandA: '',
+  operandB: '',
 };
-let { curOperand, operator, answer, inputA, inputB } = data;
+let { curOperand, operator, answer, operandA, operandB } = data;
 
 // Event listeners
 btnBackspace.addEventListener('click', backspace);
 document.addEventListener('keydown', controller);
 btnBackspace.addEventListener('dblclick', init);
 btnAllClear.addEventListener('click', init);
-
-// Event listeners for second operand
 
 // Most functions called here first?
 function controller(e) {
@@ -35,7 +33,7 @@ function controller(e) {
   const click = !numKey ? true : false;
   const keyPress = numKey ? true : false;
 
-  // 1) Input depending on click or keypress event (Scenario is for click, numKey = undefined)
+  // 1) Input depending on if a click or keypress event (Scenario is for click, numKey = undefined)
   const input = numKey ? numKey : e.target.textContent;
 
   // 2) Guard clauses for clicks/key presses not allowed
@@ -69,7 +67,7 @@ function controller(e) {
   storeOperands();
 
   // 5) Calculate expression
-  calc(inputA, inputB);
+  calc(operandA, operandB);
 
   // 7) Render result to secDisplay
   renderSecDisplay();
@@ -97,10 +95,15 @@ function renderDecimal(input) {
 }
 
 function renderOperator(input) {
+  // Store operator
+  operator = input;
+
+  // Exception for negative numbers
   containerMainDisplay.textContent += input;
   btnOperator.removeEventListener('click', controller);
+
+  // Re-enable decimal
   btnDecimal.disabled = false;
-  operator = input;
 }
 
 function backspace() {
@@ -122,14 +125,10 @@ function backspace() {
   containerMainDisplay.textContent = '';
   curOperand = curOperand.slice(0, -1);
   containerMainDisplay.textContent = curOperand;
-  // const newInput = curOperand;
-  // Update second display
-  console.log(curOperand);
+
+  // Update secondary display (answer)
   storeOperands(curOperand);
-  console.log(inputA);
-  console.log(inputB);
-  console.log(operator);
-  calc(inputA, inputB);
+  calc(operandA, operandB);
   renderSecDisplay();
 }
 
@@ -137,13 +136,13 @@ function storeOperands() {
   const operatorExists = curOperand.indexOf(operator);
   const oprIndex = operatorExists;
   if (operatorExists) {
-    inputA = curOperand.slice(0, oprIndex);
-    inputB = curOperand.slice(oprIndex + 1);
+    operandA = curOperand.slice(0, oprIndex);
+    operandB = curOperand.slice(oprIndex + 1);
   }
 }
 
 function calc(a, b) {
-  if (!inputB) return;
+  if (!operandB) return;
   if (operator === '%') divide(+a, +b);
   if (operator === '*') multiply(+a, +b);
   if (operator === '+') add(+a, +b);
@@ -152,7 +151,7 @@ function calc(a, b) {
 
 // Math functions
 function divide(a, b) {
-  if (+inputB === 0) return (answer = 'undefined');
+  if (+operandB === 0) return (answer = 'undefined');
   return (answer = a / b);
 }
 function multiply(a, b) {
@@ -166,7 +165,7 @@ function add(a, b) {
 }
 
 function renderSecDisplay() {
-  inputB === '' || operator === ''
+  !operandB || !operator
     ? (containerSecDisplay.textContent = '')
     : (containerSecDisplay.textContent = answer);
 }
@@ -201,8 +200,8 @@ function init() {
   prevOperand = '';
   operator = '';
   answer = '';
-  inputA = '';
-  inputB = '';
+  operandA = '';
+  operandB = '';
   btnDecimal.disabled = false;
 
   btnOperator.addEventListener('click', controller);
