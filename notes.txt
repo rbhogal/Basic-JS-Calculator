@@ -65,3 +65,7 @@ numKey !== '.' (not true)
 I press 0-9
 
 (!+numKey)
+
+
+-----------
+the problem is that it doesn't stop loopin it loops throught everything
