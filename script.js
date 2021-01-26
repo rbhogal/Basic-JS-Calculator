@@ -13,13 +13,12 @@ const containerSecDisplay = document.querySelector('.secondary__display');
 
 const data = {
   curOperand: '',
-  prevOperand: '',
   operator: '',
   answer: '',
   inputA: '',
   inputB: '',
 };
-let { curOperand, prevOperand, operator, answer, inputA, inputB } = data;
+let { curOperand, operator, answer, inputA, inputB } = data;
 
 // Event listeners
 btnBackspace.addEventListener('click', backspace);
@@ -65,8 +64,9 @@ function controller(e) {
   // 3) Render main display
   renderMainDisplay(input);
 
-  // 4) Separate and store string into inputs A and B
-  storeOperands(input);
+  // 4) Separate and store string (operand) into inputs aka operands A and B
+  curOperand += input;
+  storeOperands();
 
   // 5) Calculate expression
   calc(inputA, inputB);
@@ -113,19 +113,27 @@ function backspace() {
     lastInput === '*' ||
     lastInput === '-' ||
     lastInput === '+'
-  )
+  ) {
     btnOperator.addEventListener('click', controller);
+    operator = '';
+  }
 
   // Delete the last character in the string
   containerMainDisplay.textContent = '';
   curOperand = curOperand.slice(0, -1);
   containerMainDisplay.textContent = curOperand;
-
+  // const newInput = curOperand;
   // Update second display
+  console.log(curOperand);
+  storeOperands(curOperand);
+  console.log(inputA);
+  console.log(inputB);
+  console.log(operator);
+  calc(inputA, inputB);
+  renderSecDisplay();
 }
 
-function storeOperands(input) {
-  curOperand += input;
+function storeOperands() {
   const operatorExists = curOperand.indexOf(operator);
   const oprIndex = operatorExists;
   if (operatorExists) {
@@ -158,7 +166,9 @@ function add(a, b) {
 }
 
 function renderSecDisplay() {
-  containerSecDisplay.textContent = answer;
+  inputB === '' || operator === ''
+    ? (containerSecDisplay.textContent = '')
+    : (containerSecDisplay.textContent = answer);
 }
 
 function equals() {
